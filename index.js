@@ -1,1 +1,1 @@
-module.exports.Schema = require('./lib/schema');
+module.exports.validate = require('./lib/validate');

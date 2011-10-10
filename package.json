@@ -1,7 +1,7 @@
 {
-	"name": "object-schema",
-	"version": "0.0.1",
+	"name": "validate-schema",
+	"version": "0.0.2",
 	"description": "Validate javascript object",
-	"author": "Evgeny Reznichenko <kusakyky@gmaill.com>",
-	"repository": "https://github.com/zxcabs/schema_lite"
+	"author": "Evgeny Reznichenko <kusakyky@gmaill.com>, Кирилл Елькин <elkinkv@gmail.com>",
+	"repository": "https://github.com/zxcabs/validate-schema"
 }

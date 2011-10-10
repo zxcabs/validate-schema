@@ -1,137 +1,75 @@
-var Schema = require('../').Schema,
+var validate = require('../').validate,
 	assert = require('assert');
 
-	
+var schema1 = {
+			bar: 1,
+			$foo: 2,
+			fooz: {
+				baz: 3,
+				$str: /abc/,
+				$num: Number,
+				$str2: String
+			}
+		},
+		schema2 = {
+			$foo: 1,
+			bar: 2
+		},
+		schema3 = {
+			$foo: 1,
+			$bar: 2,
+			$arr1: [1, 2, 3],
+			$arr2: [],
+			$arr3: [ {foo: 1}, {bar: 2}, {$baz: 3}]
+		};
+
 module.exports = {
-	'optional params': function () {
-		var schema = new Schema({
-			$foo: 1,
-			bar: 2
-		});
-
-		schema.validate({foo: 1, bar: 2}, function (err) {
-			assert.isUndefined(err);
-		});
-		
-		schema.validate({bar: 2}, function (err) {
-			assert.isUndefined(err);
-		});
+	'schema1#1': function () {
+		assert.ok(validate({bar: 1, fooz: {baz: 3}}, schema1));
 	},
-	'optional params 2': function () {
-		var schema = new Schema({
-			$foo: 1,
-			$bar: 2,
-			baz: 3,
-			foobar: 4
-		});
-
-		schema.validate({foo: 1, bar: 2, baz: 3, foobar: 4}, function (err) {
-			assert.isUndefined(err);
-		});
-		
-		schema.validate({bar: 2,  baz: 3, foobar: 4}, function (err) {
-			assert.isUndefined(err);
-		});
-
-		schema.validate({baz: 3, foobar: 4}, function (err) {
-			assert.isUndefined(err);
-		});
+	'schema1#2': function () {
+		assert.ok(validate({bar: 1, foo: 2, fooz: {baz: 3}}, schema1));
 	},
-	'required params': function () {
-		var schema = new Schema({
-			foo: 1,
-			bar: 2
-		});
-
-		schema.validate({foo: 1, bar: 2}, function (err) {
-			assert.isUndefined(err);
-		});
-		
-		schema.validate({bar: 2}, function (err) {
-			assert.strictEqual(err, "key: foo must be required");
-		});
-
+	'schema1#3': function () {
+		assert.ok(!validate({bar: { foo: 1}, fooz: {baz: 3}}, schema1));
 	},
-	'required params 2': function () {
-		var schema = new Schema({
-			$foo: 1,
-			$bar: 2,
-			baz: 3,
-			foobar: 4
-		});
-
-		schema.validate({foo: 1, bar: 2}, function (err) {
-			assert.strictEqual(err, "key: foobar must be required");
-		});
-		
-		schema.validate({bar: 2}, function (err) {
-			assert.strictEqual(err, "key: foobar must be required");
-		});
-
-		schema.validate({foobar: 4}, function (err) {
-			assert.strictEqual(err, "key: baz must be required");
-		});
-		
-		schema.validate({foo: 1, bar:2, foobar: 4}, function (err) {
-			assert.strictEqual(err, "key: baz must be required");
-		});	
-
-		schema.validate({baz:3, foobar: 4}, function (err) {
-			assert.isUndefined(err);
-		});
-
-		schema.validate({foo:1, bar:2, baz:3, foobar: 4}, function (err) {
-			assert.isUndefined(err);
-		});
+	'schema1#4': function () {
+		assert.ok(!validate({bar: 'adasda', fooz: {baz: /rgdfg/}}, schema1));
 	},
-	'additional params': function () {
-		var schema = new Schema({
-			$foo: 1,
-			bar: 2
-		});
-
-		schema.validate({foo: 1, bar: 2}, function (err) {
-			assert.isUndefined(err);
-		});
-		
-		schema.validate({bar: 2}, function (err) {
-			assert.isUndefined(err);
-		});
-		
-		schema.validate({foo: 1, bar: 2, baz: 3}, function (err) {
-			assert.strictEqual(err, "To many keys");
-		});
-	
-		schema.validate({bar: 2, baz: 3}, function (err) {
-			assert.strictEqual(err, "To many keys");
-		});
+	'schema1#5': function () {
+		assert.ok(!validate({bar: 1, fooz: {baz: 'adfafa'}}, schema1));
 	},
-	'additional params 2': function () {
-		var schema = new Schema({
-			$foo: 1,
-			$bar: 2,
-			baz: 3,
-			foobar: 4
-		});
-
-		schema.validate({baz: 3, foobar: 4}, function (err) {
-			assert.isUndefined(err);
-		});
-		
-		schema.validate({foo: 1, bar: 2, baz: 3, foobar: 4}, function (err) {
-			assert.isUndefined(err);
-		});
-		
-		schema.validate({baz: 3, foobar: 4, bar: 2}, function (err) {
-			assert.isUndefined(err);
-		});
-		
-		schema.validate({foo: 1, bar: 2, baz: 3, foobar: 4, booz: 5}, function (err) {
-			assert.strictEqual(err, "To many keys");
-		});	
-
-		schema.validate({baz: 3, foobar: 4, booz: 5}, function (err) {
-			assert.strictEqual(err, "To many keys");
-		});
+	'schema1#6': function () {
+		assert.ok(validate({bar: 1, foo: 2, fooz: {baz: 3, str: 'abc'}}, schema1));
+	},
+	'schema1#7': function () {
+		assert.ok(validate({bar: 1, foo: 2, fooz: {baz: 3, num: 4}}, schema1));
+	},
+	'schema1#8': function () {
+		assert.ok(validate({bar: 1, foo: 2, fooz: {baz: 3, str2: 'dfdfsdfsdf'}}, schema1));
+	},
+	'schema1#9': function () {
+		assert.ok(validate({bar: 1, foo: 2, fooz: {baz: 3}}, schema1));
+	},
+	'schema2#1': function () {
+		assert.ok(!validate({bar: 2, baz: 3}, schema2));
+	},
+	'schema2#2': function () {
+		assert.ok(validate({bar: 2}, schema2));
+	},
+	'schema3#1': function () {
+		assert.ok(!validate({bar: 2, baz: 3}, schema3));
+	},
+	'schema3#3': function () {	
+		assert.ok(validate({bar: 2, arr1: [1, 2, 3]}, schema3));
+	},
+	'schema3#4': function () {
+		assert.ok(!validate({arr2: [1, 2, 3]}, schema3));
+	},
+	'schema3#5': function () {
+		assert.ok(validate({arr2: []}, schema3));
+	},
+	'schema3#6': function () {
+		assert.ok(validate({arr2: [], arr3: [{foo: 1}, {bar: 2}, {}]}, schema3));
 	}
 }
