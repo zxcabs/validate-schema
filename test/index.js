@@ -21,6 +21,10 @@ var schema1 = {
 			$arr1: [1, 2, 3],
 			$arr2: [],
 			$arr3: [ {foo: 1}, {bar: 2}, {$baz: 3}]
+		},
+		schema4 = {
+			$arr: [1, 2, 3],
+			$obj: { foo: 1 }
 		};
 
 module.exports = {
@@ -71,5 +75,17 @@ module.exports = {
 	},
 	'schema3#6': function () {
 		assert.isUndefined(validate({arr2: [], arr3: [{foo: 1}, {bar: 2}, {}]}, schema3));
+	},
+	'schema4#1': function () {
+		assert.isUndefined(validate({arr: [1, 2, 3]}, schema4));
+	},
+	'schema4#2': function () {
+		assert.eql(validate({arr: {}}, schema4), {"path":".arr","text":"type not match","value":{},"schema":[1,2,3]});
+	},
+	'schema4#3': function () {
+		assert.isUndefined(validate({obj: { foo: 1 }}, schema4));
+	},
+	'schema4#4': function () {
+		assert.eql(validate({obj: [1, 2, 3]}, schema4), {"path":".obj","text":"too many atrributes","value":["0","1","2"],"schema":["foo"]});
 	}
 }
