@@ -25,6 +25,12 @@ var schema1 = {
 		schema4 = {
 			$arr: [1, 2, 3],
 			$obj: { foo: 1 }
+		},
+		schema5 = {
+			foo: 1
+		},
+		schema6 = {
+			str: 'bla'
 		};
 
 module.exports = {
@@ -87,5 +93,15 @@ module.exports = {
 	},
 	'schema4#4': function () {
 		assert.eql(validate({obj: [1, 2, 3]}, schema4), {"path":".obj","text":"too many atrributes","value":["0","1","2"],"schema":["foo"]});
+	},
+	'schema5#1': function () {
+		assert.eql(validate({}, schema5), {"path":"","text":"not found","value":"foo","schema":"foo"});
+	},
+	'schema6#1': function () {
+		assert.isUndefined(validate({str: 'bla'}, schema6));
+	},
+	'schema6#2': function () {
+		debugger;
+		assert.eql(validate({str: 'nobla!'}, schema6), {"path":".str","text":"not match","value":"nobla!","schema":"bla"});
 	}
 }
