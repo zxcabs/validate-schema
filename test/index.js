@@ -31,6 +31,10 @@ var schema1 = {
 		},
 		schema6 = {
 			str: 'bla'
+		},
+		schema7 = {
+			'#arr': [Number],
+			'$#barr': [String]
 		};
 
 module.exports = {
@@ -101,7 +105,18 @@ module.exports = {
 		assert.isUndefined(validate({str: 'bla'}, schema6));
 	},
 	'schema6#2': function () {
-		debugger;
 		assert.eql(validate({str: 'nobla!'}, schema6), {"path":".str","text":"not match","value":"nobla!","schema":"bla"});
+	},
+	'schema7#1': function () {
+		assert.isUndefined(validate({ 'arr': [1, 2, 3]}, schema7));
+	},
+	'schema7#2': function () {
+		assert.eql(validate({ 'arr': ['1', '2', '3']}, schema7), {"path":".arr.0","text":"type not match","value":"function String() { [native code] }","schema":"function Number() { [native code] }"});
+	},
+	'schema7#3': function () {
+		assert.isUndefined(validate({ 'arr': [1, 2, 3], barr: ['1', '2', '3']}, schema7));
+	},
+	'schema7#4': function () {
+		assert.eql(validate({ 'arr': [1, 2, 3], barr: [1, 2, 3]}, schema7), {"path":".barr.0","text":"type not match","value":"function Number() { [native code] }","schema":"function String() { [native code] }"});
 	}
 }
