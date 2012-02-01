@@ -1,4 +1,5 @@
 var validate = require('../').validate,
+	types = require('../').types,
 	assert = require('assert');
 
 var schema1 = {
@@ -35,6 +36,9 @@ var schema1 = {
 		schema7 = {
 			'#arr': [Number],
 			'$#barr': [String]
+		},
+		schema8 = {
+			'textArea': types.TextArea()
 		};
 
 module.exports = {
@@ -118,5 +122,11 @@ module.exports = {
 	},
 	'schema7#4': function () {
 		assert.eql(validate({ 'arr': [1, 2, 3], barr: [1, 2, 3]}, schema7), {"path":".barr.0","text":"type not match","value":"function Number() { [native code] }","schema":"function String() { [native code] }"});
+	},
+	'schema8#1': function () {
+		assert.isUndefined(validate({ textArea: 'blabla' }, schema8));
+	},
+	'schema8#2': function () {
+		assert.isUndefined(validate({ textArea: 'блабла' }, schema8));
 	}
 }
